@@ -11,21 +11,40 @@ import {
 } from '@chakra-ui/react';
 import { Alchemy, Network, Utils } from 'alchemy-sdk';
 import { useState } from 'react';
+import { useAccount, useChainId, useChains } from 'wagmi'
+
+import '@rainbow-me/rainbowkit/styles.css';
+
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 function App() {
   const [userAddress, setUserAddress] = useState('');
   const [results, setResults] = useState([]);
   const [hasQueried, setHasQueried] = useState(false);
   const [tokenDataObjects, setTokenDataObjects] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const account = useAccount();
+  const chainId = useChainId();
+  const chains = useChains();
 
   async function getTokenBalance() {
+    setLoading(true);
+
     const config = {
-      apiKey: '<-- COPY-PASTE YOUR ALCHEMY API KEY HERE -->',
+      apiKey: '-eS7Y18qf13hDVoBdjlqN6S5ZzwoLfKI',
       network: Network.ETH_MAINNET,
     };
 
     const alchemy = new Alchemy(config);
-    const data = await alchemy.core.getTokenBalances(userAddress);
+    console.log("chains:   ", chains);
+    let currentNetwork = chains.find(x => x.id === chainId);
+    let networkName = currentNetwork.name;
+    let networkSymbol = "eth"; // currentNetwork.nativeCurrency.symbol;
+    let findNetworkConst = networkSymbol +"_"+ networkName;
+    console.log("account.address: ", account.address);
+    console.log("userAddress: ", userAddress);
+
+    const data = await alchemy.core.getTokenBalances(account.address ? account.address : userAddress);
 
     setResults(data);
 
@@ -40,6 +59,7 @@ function App() {
 
     setTokenDataObjects(await Promise.all(tokenDataPromises));
     setHasQueried(true);
+    setLoading(false);
   }
   return (
     <Box w="100vw">
@@ -49,6 +69,9 @@ function App() {
           justifyContent="center"
           flexDirection={'column'}
         >
+
+          <ConnectButton />
+
           <Heading mb={0} fontSize={36}>
             ERC-20 Token Indexer
           </Heading>
@@ -76,7 +99,7 @@ function App() {
           bgColor="white"
           fontSize={24}
         />
-        <Button fontSize={20} onClick={getTokenBalance} mt={36} bgColor="blue">
+        <Button fontSize={20} onClick={getTokenBalance} mt={36} bgColor="grey" isLoading={loading}>
           Check ERC-20 Token Balances
         </Button>
 
@@ -96,6 +119,7 @@ function App() {
                   <Box>
                     <b>Symbol:</b> ${tokenDataObjects[i].symbol}&nbsp;
                   </Box>
+
                   <Box>
                     <b>Balance:</b>&nbsp;
                     {Utils.formatUnits(
