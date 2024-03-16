@@ -9,13 +9,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.4.6",
+    "@chakra-ui/icons": "^2.1.1",
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
     "@rainbow-me/rainbowkit": "^2.0.2",
     "@tanstack/react-query": "^5.27.5",
     "alchemy-sdk": "^2.2.5",
     "ethers": "^5.7.2",
+    "framer-motion": "^11.0.12",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^5.0.1",
+    "react-router-dom": "^5.3.4",
     "viem": "^2.8.4",
     "wagmi": "^2.5.7"
   },
